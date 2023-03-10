@@ -22,4 +22,26 @@
 数据池可以`存储多种格式数据`，并保证数据的`先入先出`存取，通过内存池提升数据存取效率。
 出于一些原因，在这里笔者并未给出通过内存池实现的数据缓存队列，相信感兴趣的读者可以通过给出的内存池实现和队列设计可以自行实现。
 
+# Memory Pool A
+This project has realized a dynamic memory allocation list queue based on C++ 11 'high performance memory pool'. The queue supports 30 Hz to 50 Hz data input and 10 Hz data output under 'multithreading'. The project includes a self-implemented memory pool allocator. Can 'improve memory allocation performance' to some extent, reduce the generation of memory fragmentation and memory allocation failure caused by the program crash.
+
+# Project background
+At the beginning of the project, the Leader's requirement is to design a container that can simultaneously cache multiple data types. The container needs to ensure the first-in, first-out access rule. Therefore, the author chose to encapsulate the deque queue in STL and designed the data structure to meet the requirements of multiple data access. Inserting data can be done by overloading, which is also the first version.
+
+However, in the test process, because the data input frequency is very high, but the fetch rate is slow, so the data is easy to backlog in the queue, the stack area memory overhead will be very large, and the stack area memory is only reclaimed after the process ends, so it will lead to the whole process memory consumption is large, in order to solve this problem, I chose to change the class member type to 'pointer' type, which is the second version.
+
+After changing to a pointer, the heap area memory can be allocated when the data enters the queue, and the memory can be released immediately after the data is removed, thus reducing the memory overhead to some extent. Although solved the memory cost problem, but with the data input frequency is higher and higher, gradually produced a new problem, that is, every time the data stored in the heap area to apply for memory, take out the data need to release memory, 'frequent memory application and release there are certain security risks', and the most critical is that the efficiency of the program will be reduced, the author found that, Because each new delete needs to be connected with the operating system, there is a certain amount of overhead, will affect the efficiency of the program, and there may be insufficient memory, in order to solve this problem, the author looked up some information after deciding to choose the 'memory pooling technology' to solve.
+
+# Project architecture
+
+## Memory pool design
+Pointer, is a unique point of C/C++, in the program design, it is inevitable to operate the memory, but the convenience of direct operation of memory will also bring many hidden dangers to the program design, may encounter insufficient memory, allocation failure and other special cases, and each memory allocation needs to apply to the operating system, there is time and space overhead, efficiency is not high.
+In order to better manage and optimize program memory, memory pooling technology can be used to reduce the cost of operating memory to a certain extent and improve program efficiency. Therefore, in this project, a memory pool with good performance will be realized to solve some project requirements encountered in the process of work.
+
+## Linked list stack
+In order to verify the performance of the memory pool design, it is also necessary to design a data structure that can be used for dynamic memory allocation as the carrier. The default allocator and memory pool are used as memory allocation tools respectively to carry out the same data input and output, and observe the allocation efficiency of both. The common test tool is the linked list stack structure, so the author will first implement a linked list stack, as a test to assign its performance tool.
+
+## Data cache pool
+Data pool can 'store multiple formats of data', and ensure data 'first-in, first-out' access, through the memory pool to improve the efficiency of data access.
+For some reason, the data cache queue implemented by the memory pool is not presented here. I believe that interested readers can implement the memory pool implementation and queue design by themselves.
 
